@@ -1,0 +1,3 @@
+export enum DataState {
+    LOADING_STATE = 'LOADING_STATE' , LOADED_STATE = 'LOADED_STATE' , EROR_STATE = 'EROR_STATE'
+}
