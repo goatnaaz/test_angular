@@ -2,6 +2,6 @@ import { DataState } from "../enum/data-state.enum";
 
 export interface ApppSTate <T> {
     dataState : DataState;
-    appData : T;
+    appData? : T;
     error?: string;
 }
