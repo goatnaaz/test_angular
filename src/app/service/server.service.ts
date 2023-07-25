@@ -8,7 +8,7 @@ import { CustomResponce } from '../interface/custom-responce';
 
 @Injectable({ providedIn: 'root' })
 export class ServerService {
-  private readonly apiUrl = 'http://localhost:8080';
+  private readonly apiUrl = `http://localhost:8080`;
 
   constructor(private http: HttpClient) { }
 
@@ -33,31 +33,32 @@ export class ServerService {
         catchError(this.handleError)
       );
 
-  filter$ = (status: Status, response: CustomResponce) => <Observable<CustomResponce>>
-    new Observable<CustomResponce>(
-      suscriber => {
-        console.log(response);
-        suscriber.next(
-          status === Status.ALL ? { ...response, message: `Servers filtered by ${status} status` } :
-            {
-              ...response,
-              message: response.data.servers
-                .filter(server => server.status === status).length > 0 ? `Servers filtered by 
-          ${status === Status.SERVER_UP ? 'SERVER UP'
-                : 'SERVER DOWN'} status` : `No servers of ${status} found`,
-              data: {
-                servers: response.data.servers
-                  .filter(server => server.status === status)
+      filter$ = (status: Status, response: CustomResponce) => <Observable<CustomResponce>>
+      new Observable<CustomResponce>(
+        suscriber => {
+          console.log(response);
+          suscriber.next(
+            status === Status.ALL ? { ...response, message: `Servers filtered by ${status} status` } :
+              {
+                ...response,
+                message: response.data.servers
+                  .filter(server => server.status === status).length > 0 ? `Servers filtered by 
+            ${status === Status.SERVER_UP ? 'SERVER UP'
+                  : 'SERVER DOWN'} status` : `No servers of ${status} found`,
+                data: {
+                  servers: response.data.servers
+                    .filter(server => server.status === status)
+                }
               }
-            }
+          );
+          suscriber.complete();
+        }
+      )
+        .pipe(
+          tap(console.log),
+          catchError(this.handleError)
         );
-        suscriber.complete();
-      }
-    )
-      .pipe(
-        tap(console.log),
-        catchError(this.handleError)
-      );
+  
 
   delete$ = (serverId: number) => <Observable<CustomResponce>>
     this.http.delete<CustomResponce>(`${this.apiUrl}/server/delete/${serverId}`)
